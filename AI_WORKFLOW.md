@@ -1,4 +1,3 @@
-<!-- REVIEW BEFORE SUBMITTING: this note is drafted from the actual build session. Edit it so it reflects your own involvement, and add any other AI tools you used. -->
 # AI-native workflow note
 
 ## Tools used
