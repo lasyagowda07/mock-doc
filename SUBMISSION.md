@@ -5,8 +5,9 @@
 | What | Where |
 |---|---|
 | **Live product** | https://mock-doc.vercel.app |
-| **Walkthrough video** | see `walkthrough-video-url.txt` — _TODO: add link_ |
-| **Source code** | in this folder (`source/` zip) — _TODO: confirm repo access if sharing the GitHub link_ |
+| **Walkthrough video** | https://youtu.be/OrKCvrkOF3g (also in `walkthrough-video-url.txt`) |
+| **Google Drive folder** | https://drive.google.com/drive/folders/13zOTIJmm9DZ4GDazAz805r17Jpy16MHL?usp=sharing |
+| **Source code (GitHub)** | https://github.com/lasyagowda07/mock-doc |
 
 ## Test accounts (no setup needed)
 
@@ -24,12 +25,12 @@ New accounts can also be created at `/signup` (no email confirmation). On the lo
 
 | File / folder | Purpose |
 |---|---|
-| `source/` (or the repo) | Full source code (no `node_modules`, no secrets) |
+| `source/` (or the GitHub repo) | Full source code (no `node_modules`, no secrets) |
 | `README.md` | Setup and run instructions, env vars, tests, deployment, status (working / incomplete / next 2–4 hours) |
 | `ARCHITECTURE.md` | Architecture note: what was prioritized and why, decisions, cuts, limitations |
 | `AI_WORKFLOW.md` | AI workflow note: tools, speed-ups, what was changed/rejected, how it was verified |
 | `SUBMISSION.md` | This file |
-| `walkthrough-video-url.txt` | Link to the 3–5 minute walkthrough video |
+| `walkthrough-video-url.txt` | Link to the walkthrough video |
 | `docs/screenshots/` | Screenshots of the main flows (login, signup, dashboard, upload, share, editor, export, shared-with-me, read-only viewer, phone layouts) |
 | `.env.example` | Template of the environment variables needed to run locally (no real values) |
 | `supabase/migrations/` | Database schema and Row Level Security policies |

@@ -1,6 +1,6 @@
 # Ajaia Collaborative Doc Editor — Build Plan
 
-> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 ✅ · Sprint 6 ✅ · Sprint 7 next (video, final submission package).
+> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 ✅ · Sprint 6 ✅ · Sprint 8 (visual polish) ✅ · Sprint 7 (submission package): video, links and Drive folder done.
 > Live: https://mock-h8rzy8iad-lasyagowda07-7344s-projects.vercel.app · Repo: github.com/lasyagowda07/mock-doc (private)
 > Demo logins (run `npm run seed`): alice@ / bob@ / carol@example.com, password `Demo-pass-123`.
 
@@ -236,10 +236,10 @@ Dashboard sections (the "canvas"):
 
 ## Sprint 7 — Submission package (≈1–2 hrs)
 
-- [ ] Record 3–5 min walkthrough (Loom/YouTube unlisted). Cover: main flow, what works end to end, what was deprioritized, key decisions, how AI helped. Script suggested below.
-- [ ] `walkthrough-url.txt` with the video link
-- [ ] `SUBMISSION.md`: exact list of folder contents, live URL, test credentials (owner + collaborator accounts), local run pointer, partial-feature statement
-- [ ] Google Drive folder with: source code (zip, no `node_modules`/`.env`), README, architecture note, AI note, SUBMISSION.md, video URL txt, screenshots/GIF
+- [x] Record 3–5 min walkthrough (Loom/YouTube unlisted). Cover: main flow, what works end to end, what was deprioritized, key decisions, how AI helped. Script suggested below.
+- [x] `walkthrough-url.txt` with the video link
+- [x] `SUBMISSION.md`: exact list of folder contents, live URL, test credentials (owner + collaborator accounts), local run pointer, partial-feature statement
+- [x] Google Drive folder with: source code (zip, no `node_modules`/`.env`), README, architecture note, AI note, SUBMISSION.md, video URL txt, screenshots/GIF
 - [ ] Set Drive folder sharing to "anyone with link can view"; test link in incognito
 - [ ] Final fresh-clone test: clone → follow README → app runs
 - [ ] Final live test in incognito with the seeded accounts

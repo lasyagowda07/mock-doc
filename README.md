@@ -47,7 +47,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for design decisions and trade-offs.
 ### 1. Install
 
 ```bash
-git clone <repo-url> && cd mock-doc
+git clone https://github.com/lasyagowda07/mock-doc.git && cd mock-doc
 npm install
 ```
 
@@ -156,3 +156,4 @@ docs/screenshots    screenshots used in the docs
 - [ARCHITECTURE.md](ARCHITECTURE.md) — what was prioritized and why
 - [AI_WORKFLOW.md](AI_WORKFLOW.md) — how AI tools were used and verified
 - [SUBMISSION.md](SUBMISSION.md) — exactly what's included in the submission
+- Walkthrough video: https://youtu.be/OrKCvrkOF3g
