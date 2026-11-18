@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { FileText, FileUp, MoreVertical, Pencil, Share2, Trash2, Users } from "lucide-react";
+import { Download, FileText, FileUp, MoreVertical, Pencil, Printer, Share2, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,8 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { deleteDocument, renameDocument } from "@/app/docs/actions";
+import { deleteDocument, exportMarkdown, renameDocument } from "@/app/docs/actions";
+import { downloadText } from "@/lib/export/download";
 import { TimeAgo } from "@/components/time-ago";
 import { ShareDialog } from "@/components/share-dialog";
 import { canDelete, canRename, canShare, roleLabel } from "@/lib/permissions";
@@ -30,6 +32,7 @@ export function DocumentCard({ doc }: { doc: DocListItem }) {
   const [shareOpen, setShareOpen] = useState(false);
   const [title, setTitle] = useState(doc.title);
   const [pending, startTransition] = useTransition();
+  const router = useRouter();
   const Icon = doc.source === "uploaded" ? FileUp : FileText;
   const isShared = doc.role !== "owner";
 
@@ -42,6 +45,12 @@ export function DocumentCard({ doc }: { doc: DocListItem }) {
         toast.success("Document renamed");
       } else toast.error(res.error);
     });
+  }
+
+  async function onExportMarkdown() {
+    const res = await exportMarkdown(doc.id);
+    if (res.ok) downloadText(res.filename, res.markdown);
+    else toast.error(res.error);
   }
 
   function confirmDelete() {
@@ -92,6 +101,12 @@ export function DocumentCard({ doc }: { doc: DocListItem }) {
               <Pencil /> Rename
             </DropdownMenuItem>
           )}
+          <DropdownMenuItem onClick={onExportMarkdown}>
+            <Download /> Export as Markdown
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push(`/docs/${doc.id}?print=1`)}>
+            <Printer /> Export as PDF
+          </DropdownMenuItem>
           {canDelete(doc.role) && (
             <>
               <DropdownMenuSeparator />

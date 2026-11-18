@@ -1,6 +1,6 @@
 # Ajaia Collaborative Doc Editor — Build Plan
 
-> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 next.
+> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 ✅ · Sprint 6 next (polish, README/docs, final deploy checks).
 > Live: https://mock-h8rzy8iad-lasyagowda07-7344s-projects.vercel.app · Repo: github.com/lasyagowda07/mock-doc (private)
 > Demo logins (run `npm run seed`): alice@ / bob@ / carol@example.com, password `Demo-pass-123`.
 
@@ -52,12 +52,12 @@ Dashboard sections (the "canvas"):
 | Shared access demonstrable | 4 | [x] |
 | Setup/run instructions | 6 | [ ] |
 | Working deployment | 6 | [ ] |
-| Validation + error handling | 5 | [ ] |
-| ≥1 meaningful automated test | 5 | [ ] |
+| Validation + error handling | 5 | [x] |
+| ≥1 meaningful automated test | 5 | [x] |
 | Architecture note | 6 | [ ] |
 | AI workflow note | 6 | [ ] |
 | Walkthrough video (3–5 min) | 7 | [ ] |
-| Export PDF / Markdown (stretch) | 5 | [ ] |
+| Export PDF / Markdown (stretch) | 5 | [x] |
 | Role-based permissions (stretch) | 4 | [x] |
 | README: working / incomplete / next 2–4 hrs | 6 | [ ] |
 | SUBMISSION.md, creds, video URL txt, screenshots | 7 | [ ] |
@@ -185,23 +185,25 @@ Dashboard sections (the "canvas"):
 ## Sprint 5 — Export, validation, errors, tests (≈3–4 hrs)
 
 **Export (stretch)**
-- [ ] Export menu in editor (and dashboard card menu): **Markdown (.md)** and **PDF**
-- [ ] Markdown: Tiptap JSON → HTML → Markdown (turndown) or `tiptap-markdown`; download via Blob; filename = title
-- [ ] PDF: render doc HTML → `html2pdf.js` or print-optimized CSS + `window.print()`; preserve headings/lists/bold/italic/underline
-- [ ] Viewers can export too
+- [x] Export menu in editor (and dashboard card menu): **Markdown (.md)** and **PDF**
+- [x] Markdown: own pure serializer `src/lib/export/markdown.ts` (Tiptap JSON → MD; underline as `<u>`), downloaded via Blob; filename = sanitized title. Editor exports live (even unsaved) content
+- [x] PDF: print-optimized CSS + `window.print()` (real selectable text, full Unicode; `html2pdf.js` rejected because it rasterizes pages). Dashboard card → opens doc with `?print=1`
+- [x] Viewers can export too
 
 **Validation & errors**
-- [ ] zod schemas: auth forms, title (1–200 chars), share email + role, upload file
-- [ ] Consistent toast/inline error handling for all Supabase calls
-- [ ] Global `error.tsx` and `not-found.tsx`; loading states (`loading.tsx`)
-- [ ] Network-failure handling for autosave (retry + visible state)
+- [x] zod schemas: auth forms, title (1–200 chars), share email + role, upload file
+- [x] Consistent toast/inline error handling for all Supabase calls
+- [x] Global `error.tsx` and `not-found.tsx`; loading states (`loading.tsx`)
+- [x] Network-failure handling for autosave (retry + visible state)
 
 **Tests**
-- [ ] Unit (Vitest): import converters (txt/md → Tiptap JSON), markdown export, zod schemas
-- [ ] Permission logic test: role → capability helper (`canEdit`, `canShare`, `canDelete`)
-- [ ] RLS test (SQL or script with two real users): viewer can't update, non-shared user can't read — **this is the "meaningful" test**
-- [ ] (Optional) Playwright E2E: login → create → format → share → other user sees it
-- [ ] `npm test` documented in README
+- [x] Unit (Vitest): import converters (txt/md → Tiptap JSON), markdown export, zod schemas
+- [x] Permission logic test: role → capability helper (`canEdit`, `canShare`, `canDelete`)
+- [x] RLS test (SQL or script with two real users): viewer can't update, non-shared user can't read — **this is the "meaningful" test**
+- [x] (Optional) Playwright E2E: login → create → format → share → other user sees it
+- [x] `npm test` documented in README
+
+**Decisions made:** removed unused `turndown`/`html2pdf.js`. Added `global-error.tsx` and `docs/[id]/loading.tsx`. Tests: 35 unit/RLS (`npm test`) + 15 Playwright E2E (`npm run test:e2e`) incl. export downloads, offline autosave recovery, and a print-media check. **Bug found:** shadcn init generated a self-referential `--font-sans`, so the whole app rendered in Times; fixed (Geist now loads).
 
 **Exit:** tests green; exports open correctly in Preview/Word/any md viewer.
 

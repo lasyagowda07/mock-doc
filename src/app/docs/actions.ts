@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { docToMarkdown, exportFilename } from "@/lib/export/markdown";
 import {
   docIdSchema,
   titleSchema,
@@ -62,4 +63,14 @@ export async function deleteDocument(id: string): Promise<ActionResult> {
   if (!data?.length) return fail("Only the owner can delete a document.");
   revalidatePath("/");
   return { ok: true };
+}
+
+/** Used by the dashboard card menu; the editor exports its live content client-side instead. */
+export async function exportMarkdown(id: string): Promise<{ ok: true; filename: string; markdown: string } | { ok: false; error: string }> {
+  const parsed = docIdSchema.safeParse(id);
+  if (!parsed.success) return { ok: false, error: "Invalid document" };
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("documents").select("title, content").eq("id", parsed.data).maybeSingle();
+  if (error || !data) return { ok: false, error: "Couldn't export this document." };
+  return { ok: true, filename: exportFilename(data.title, "md"), markdown: docToMarkdown(data.content) };
 }

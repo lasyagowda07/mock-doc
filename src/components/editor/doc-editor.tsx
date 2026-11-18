@@ -4,14 +4,17 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { EditorContent, type JSONContent, useEditor } from "@tiptap/react";
 
-import { AlertCircle, Check, Eye, FileText, Loader2, Share2 } from "lucide-react";
+import { AlertCircle, Check, Download, Eye, FileText, Loader2, Printer, Share2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserMenu } from "@/components/user-menu";
 import { Toolbar } from "@/components/editor/toolbar";
 import { type SaveStatus, useAutosave } from "@/components/editor/use-autosave";
 import { editorExtensions } from "@/lib/editor-extensions";
+import { downloadText, printAsPdf } from "@/lib/export/download";
+import { docToMarkdown, exportFilename } from "@/lib/export/markdown";
 import { ShareDialog } from "@/components/share-dialog";
 import { canEdit, canRename, canShare, roleLabel } from "@/lib/permissions";
 import type { DocDetail } from "@/lib/types";
@@ -37,7 +40,7 @@ function StatusIndicator({ status, error, onRetry }: { status: SaveStatus; error
   );
 }
 
-export function DocEditor({ doc, user }: { doc: DocDetail; user: { name: string; email: string } }) {
+export function DocEditor({ doc, user, autoPrint = false }: { doc: DocDetail; user: { name: string; email: string }; autoPrint?: boolean }) {
   const editable = canEdit(doc.role);
   const { status, error, queue, saveNow } = useAutosave(doc.id);
   const [title, setTitle] = useState(doc.title);
@@ -53,6 +56,17 @@ export function DocEditor({ doc, user }: { doc: DocDetail; user: { name: string;
     onUpdate: ({ editor }) => queue({ content: editor.getJSON() }),
   });
 
+  // Dashboard "Export as PDF" lands here with ?print=1: open the print dialog once, then clean the URL.
+  useEffect(() => {
+    if (!autoPrint || !editor) return;
+    const timer = setTimeout(() => {
+      history.replaceState(null, "", location.pathname);
+      printAsPdf(title);
+    }, 400);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPrint, editor]);
+
   useEffect(() => {
     if (!editable) return;
     const onKey = (e: KeyboardEvent) => {
@@ -65,6 +79,11 @@ export function DocEditor({ doc, user }: { doc: DocDetail; user: { name: string;
     return () => window.removeEventListener("keydown", onKey);
   }, [editable, saveNow]);
 
+  function exportMarkdown() {
+    if (!editor) return;
+    downloadText(exportFilename(lastValidTitle.current, "md"), docToMarkdown(editor.getJSON()));
+  }
+
   function onTitleChange(value: string) {
     setTitle(value);
     if (value.trim()) {
@@ -74,8 +93,8 @@ export function DocEditor({ doc, user }: { doc: DocDetail; user: { name: string;
   }
 
   return (
-    <div className="flex min-h-svh flex-col bg-muted/30">
-      <header className="sticky top-0 z-10 bg-background">
+    <div className="flex min-h-svh flex-col bg-muted/30 print:bg-white">
+      <header className="sticky top-0 z-10 bg-background print:hidden">
         <div className="flex h-14 items-center gap-3 border-b px-4">
           <Link href="/" aria-label="Back to documents" className="text-muted-foreground hover:text-foreground">
             <FileText className="size-6" />
@@ -97,6 +116,15 @@ export function DocEditor({ doc, user }: { doc: DocDetail; user: { name: string;
             {editable ? <StatusIndicator status={status} error={error} onRetry={saveNow} /> : (
               <span className="text-sm text-muted-foreground">View only</span>
             )}
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button variant="outline" />}>
+                <Download /> Export
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={exportMarkdown}><Download /> Markdown (.md)</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => printAsPdf(lastValidTitle.current)}><Printer /> PDF (print dialog)</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             {canShare(doc.role) && (
               <>
                 <Button variant="outline" onClick={() => setShareOpen(true)}>
@@ -110,8 +138,8 @@ export function DocEditor({ doc, user }: { doc: DocDetail; user: { name: string;
         </div>
         {editor && editable && <Toolbar editor={editor} />}
       </header>
-      <main className="flex-1 px-4 py-8">
-        <div className="mx-auto min-h-[60vh] max-w-3xl rounded-lg border bg-background p-8 shadow-sm sm:p-12">
+      <main className="flex-1 px-4 py-8 print:p-0">
+        <div className="mx-auto min-h-[60vh] max-w-3xl rounded-lg border bg-background p-8 shadow-sm sm:p-12 print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none">
           <EditorContent editor={editor} />
         </div>
       </main>

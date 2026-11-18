@@ -3,8 +3,9 @@ import { DocEditor } from "@/components/editor/doc-editor";
 import { getCurrentUser, getDocument } from "@/lib/documents";
 import { docIdSchema } from "@/lib/validation/documents";
 
-export default async function DocPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function DocPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ print?: string }> }) {
   const { id } = await params;
+  const { print } = await searchParams;
   if (!docIdSchema.safeParse(id).success) notFound();
 
   const user = await getCurrentUser();
@@ -12,7 +13,7 @@ export default async function DocPage({ params }: { params: Promise<{ id: string
   const doc = await getDocument(id, user.id);
   if (!doc) notFound();
 
-  return <DocEditor doc={doc} user={{ name: user.display_name, email: user.email }} />;
+  return <DocEditor doc={doc} user={{ name: user.display_name, email: user.email }} autoPrint={print === "1"} />;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
