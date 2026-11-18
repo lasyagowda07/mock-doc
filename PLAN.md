@@ -1,6 +1,6 @@
 # Ajaia Collaborative Doc Editor — Build Plan
 
-> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 next.
+> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 next.
 > Live: https://mock-h8rzy8iad-lasyagowda07-7344s-projects.vercel.app · Repo: github.com/lasyagowda07/mock-doc (private)
 > Demo logins (run `npm run seed`): alice@ / bob@ / carol@example.com, password `Demo-pass-123`.
 
@@ -41,8 +41,8 @@ Dashboard sections (the "canvas"):
 | Bold, italic, underline | 2 | [x] |
 | Headings / text size | 2 | [x] |
 | Bulleted + numbered lists | 2 | [x] |
-| File upload → product-relevant | 3 | [ ] |
-| Supported file types stated in UI **and** README | 3, 6 | [ ] |
+| File upload → product-relevant | 3 | [x] |
+| Supported file types stated in UI **and** README | 3, 6 | UI [x] · README [ ] |
 | Doc owner | 1, 4 | [ ] |
 | Grant another user access | 4 | [ ] |
 | Visible owned vs shared distinction | 1/4 | [x] _(badges, accent border, "Shared by", separate section)_ |
@@ -144,17 +144,19 @@ Dashboard sections (the "canvas"):
 
 ## Sprint 3 — File upload (≈2–3 hrs)
 
-- [ ] Upload button + drag-and-drop zone on dashboard
-- [ ] Supported types: **.txt, .md, .docx** — stated in the dialog and README
-- [ ] Client + server validation: extension/MIME, max size (e.g. 5 MB), non-empty
-- [ ] `.txt` → paragraphs (split on blank lines, preserve line breaks)
-- [ ] `.md` → HTML → Tiptap JSON (headings, bold, italic, lists)
-- [ ] `.docx` → `mammoth` → HTML → Tiptap JSON (headings, bold/italic/underline, lists)
-- [ ] Creates new doc with `source = 'uploaded'`, title = filename sans extension, `original_filename` stored
-- [ ] Appears in **Uploaded documents** section; opens in editor
-- [ ] (Optional) also keep original file in Supabase Storage bucket with RLS — skip if short on time and note it
-- [ ] Error toasts: unsupported type, too large, corrupt file
-- [ ] Sanitize imported HTML (strip scripts/styles)
+- [x] Upload button + drag-and-drop zone on dashboard
+- [x] Supported types: **.txt, .md, .docx** — stated in the dialog and README
+- [x] Client + server validation: extension/MIME, max size (e.g. 5 MB), non-empty
+- [x] `.txt` → paragraphs (split on blank lines, preserve line breaks)
+- [x] `.md` → HTML → Tiptap JSON (headings, bold, italic, lists)
+- [x] `.docx` → `mammoth` → HTML → Tiptap JSON (headings, bold/italic/underline, lists)
+- [x] Creates new doc with `source = 'uploaded'`, title = filename sans extension, `original_filename` stored
+- [x] Appears in **Uploaded documents** section; opens in editor
+- [ ] ~~(Optional) keep original file in Supabase Storage~~ — skipped by design; the original filename is stored on the document
+- [x] Error toasts: unsupported type, too large, corrupt file
+- [x] Sanitize imported HTML (strip scripts/styles)
+
+**Decisions made:** one file per upload; 4 MB cap (Vercel's request limit is 4.5 MB); conversion runs server-side through the editor's own schema (`src/lib/editor-extensions.ts`), so unsupported markup (scripts, images, tables) is dropped by construction; images/tables are not imported and the dialog says so. Underline in `.docx` needed a mammoth style-map. Tested in `tests/import.test.ts` + `tests/e2e/upload.spec.ts`.
 
 **Exit:** upload each of the 3 types, edit the result, refresh, still there.
 

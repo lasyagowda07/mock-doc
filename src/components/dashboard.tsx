@@ -53,7 +53,7 @@ export function Dashboard({ docs }: { docs: DocListItem[] }) {
         />
       </div>
       <Section title="My documents" hint="Documents you created." docs={mine} empty={query ? "No matches." : "Nothing here yet. Click “New document” to start writing."} />
-      <Section title="Uploaded documents" hint="Documents imported from files you uploaded." docs={uploaded} empty={query ? "No matches." : "No uploads yet."} />
+      <Section title="Uploaded documents" hint="Documents imported from files you uploaded." docs={uploaded} empty={query ? "No matches." : "No uploads yet. Use “Upload” to import a .txt, .md or .docx file."} />
       <Section title="Shared with me" hint="Documents other people shared with you." docs={shared} empty={query ? "No matches." : "Nothing has been shared with you yet."} />
     </div>
   );

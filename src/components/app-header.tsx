@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FileText, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UploadDialog } from "@/components/upload-dialog";
 import { UserMenu } from "@/components/user-menu";
 import { createDocument } from "@/app/docs/actions";
 
@@ -12,6 +13,7 @@ export function AppHeader({ name, email }: { name: string; email: string }) {
           <FileText className="size-5" /> Ajaia Docs
         </Link>
         <div className="flex items-center gap-3">
+          <UploadDialog />
           <form action={createDocument}>
             <Button type="submit">
               <Plus /> New document

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { EditorContent, type JSONContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+
 import { AlertCircle, Check, Eye, FileText, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { UserMenu } from "@/components/user-menu";
 import { Toolbar } from "@/components/editor/toolbar";
 import { type SaveStatus, useAutosave } from "@/components/editor/use-autosave";
+import { editorExtensions } from "@/lib/editor-extensions";
 import { canEdit, canRename, roleLabel } from "@/lib/permissions";
 import type { DocDetail } from "@/lib/types";
 
@@ -42,7 +43,7 @@ export function DocEditor({ doc, user }: { doc: DocDetail; user: { name: string;
   const lastValidTitle = useRef(doc.title);
 
   const editor = useEditor({
-    extensions: [StarterKit.configure({ heading: { levels: [1, 2, 3] } })],
+    extensions: editorExtensions,
     content: doc.content as JSONContent,
     editable,
     immediatelyRender: false, // avoid SSR hydration mismatch
