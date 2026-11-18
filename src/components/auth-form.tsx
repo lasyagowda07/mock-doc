@@ -31,13 +31,13 @@ export function AuthForm({ mode, action }: Props) {
           {isSignup && (
             <div className="space-y-1.5">
               <Label htmlFor="displayName">Name</Label>
-              <Input id="displayName" name="displayName" autoComplete="name" required aria-invalid={!!fe?.displayName} />
+              <Input id="displayName" name="displayName" autoComplete="name" defaultValue={state?.values?.displayName} required aria-invalid={!!fe?.displayName} />
               {fe?.displayName && <p className="text-sm text-destructive">{fe.displayName[0]}</p>}
             </div>
           )}
           <div className="space-y-1.5">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" autoComplete="email" required aria-invalid={!!fe?.email} />
+            <Input id="email" name="email" type="email" autoComplete="email" defaultValue={state?.values?.email} required aria-invalid={!!fe?.email} />
             {fe?.email && <p className="text-sm text-destructive">{fe.email[0]}</p>}
           </div>
           <div className="space-y-1.5">

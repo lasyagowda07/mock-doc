@@ -53,7 +53,7 @@ export function UploadDialog() {
   return (
     <Dialog open={open} onOpenChange={reset}>
       <DialogTrigger render={<Button variant="outline" />}>
-        <Upload /> Upload
+        <Upload /> <span className="max-sm:sr-only">Upload</span>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={submit} className="space-y-4">

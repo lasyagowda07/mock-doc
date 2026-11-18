@@ -95,7 +95,7 @@ export function DocEditor({ doc, user, autoPrint = false }: { doc: DocDetail; us
   return (
     <div className="flex min-h-svh flex-col bg-muted/30 print:bg-white">
       <header className="sticky top-0 z-10 bg-background print:hidden">
-        <div className="flex h-14 items-center gap-3 border-b px-4">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b px-4 py-2 sm:h-14 sm:flex-nowrap sm:py-0">
           <Link href="/" aria-label="Back to documents" className="text-muted-foreground hover:text-foreground">
             <FileText className="size-6" />
           </Link>
@@ -106,19 +106,19 @@ export function DocEditor({ doc, user, autoPrint = false }: { doc: DocDetail; us
             disabled={!canRename(doc.role)}
             maxLength={200}
             aria-label="Document title"
-            className="h-9 max-w-md border-transparent bg-transparent text-base font-medium hover:border-input focus-visible:border-ring"
+            className="order-last h-9 w-full border-transparent bg-transparent text-base font-medium hover:border-input focus-visible:border-ring sm:order-none sm:w-auto sm:max-w-md sm:flex-1"
           />
           <Badge variant={doc.role === "owner" ? "outline" : "secondary"}>
             {!editable && <Eye />} {roleLabel[doc.role]}
             {doc.role !== "owner" && ` · shared by ${doc.ownerName}`}
           </Badge>
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ml-auto flex items-center gap-2 sm:gap-3">
             {editable ? <StatusIndicator status={status} error={error} onRetry={saveNow} /> : (
               <span className="text-sm text-muted-foreground">View only</span>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger render={<Button variant="outline" />}>
-                <Download /> Export
+                <Download /> <span className="max-sm:sr-only">Export</span>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={exportMarkdown}><Download /> Markdown (.md)</DropdownMenuItem>
@@ -128,7 +128,7 @@ export function DocEditor({ doc, user, autoPrint = false }: { doc: DocDetail; us
             {canShare(doc.role) && (
               <>
                 <Button variant="outline" onClick={() => setShareOpen(true)}>
-                  <Share2 /> Share
+                  <Share2 /> <span className="max-sm:sr-only">Share</span>
                 </Button>
                 <ShareDialog docId={doc.id} title={title} open={shareOpen} onOpenChange={setShareOpen} />
               </>

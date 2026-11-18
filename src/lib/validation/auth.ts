@@ -10,4 +10,15 @@ export const signupSchema = loginSchema.extend({
   password: z.string().min(8, "Password must be at least 8 characters").max(72, "Password is too long"),
 });
 
-export type AuthState = { error?: string; fieldErrors?: Record<string, string[] | undefined> } | undefined;
+export type AuthState =
+  | {
+      error?: string;
+      fieldErrors?: Record<string, string[] | undefined>;
+      /** Echoed back so a failed submit doesn't wipe the form (React resets uncontrolled forms after an action). Never the password. */
+      values?: { email?: string; displayName?: string };
+    }
+  | undefined;
+
+export function echoValues(formData: FormData): NonNullable<AuthState>["values"] {
+  return { email: String(formData.get("email") ?? ""), displayName: String(formData.get("displayName") ?? "") };
+}

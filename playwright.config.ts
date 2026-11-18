@@ -1,5 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
+try { process.loadEnvFile(".env.local"); } catch { /* env may come from the shell/CI */ }
+
 const PORT = 3456;
 export default defineConfig({
   testDir: "tests/e2e",

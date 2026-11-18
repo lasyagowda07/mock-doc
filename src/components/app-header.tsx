@@ -9,14 +9,14 @@ export function AppHeader({ name, email }: { name: string; email: string }) {
   return (
     <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
+        <Link href="/" className="flex items-center gap-2 whitespace-nowrap font-semibold">
           <FileText className="size-5" /> Ajaia Docs
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <UploadDialog />
           <form action={createDocument}>
             <Button type="submit">
-              <Plus /> New document
+              <Plus /> <span className="max-sm:sr-only">New document</span>
             </Button>
           </form>
           <UserMenu name={name} email={email} />

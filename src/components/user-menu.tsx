@@ -17,10 +17,11 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
   const initials = name.split(/\s+/).map((p) => p[0]).slice(0, 2).join("").toUpperCase();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger aria-label="Account menu" className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+      <DropdownMenuTrigger className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
         <Avatar>
-          <AvatarFallback>{initials}</AvatarFallback>
+          <AvatarFallback className="text-foreground">{initials}</AvatarFallback>
         </Avatar>
+        <span className="sr-only">Account menu</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-56">
         <DropdownMenuGroup>

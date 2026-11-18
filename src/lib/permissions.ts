@@ -6,6 +6,5 @@ export const canEdit = (role: DocRole) => role === "owner" || role === "editor";
 export const canRename = canEdit;
 export const canShare = (role: DocRole) => role === "owner";
 export const canDelete = (role: DocRole) => role === "owner";
-export const canExport = () => true;
 
 export const roleLabel: Record<DocRole, string> = { owner: "Owner", editor: "Editor", viewer: "Viewer" };
