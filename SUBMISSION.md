@@ -25,7 +25,7 @@ New accounts can also be created at `/signup` (no email confirmation). On the lo
 
 | File / folder | Purpose |
 |---|---|
-| `source/` (or the GitHub repo) | Full source code (no `node_modules`, no secrets) |
+| `ajaia-docs-source.zip` (also on GitHub) | Full source code (no `node_modules`, no secrets) |
 | `README.md` | Setup and run instructions, env vars, tests, deployment, status (working / incomplete / next 2–4 hours) |
 | `ARCHITECTURE.md` | Architecture note: what was prioritized and why, decisions, cuts, limitations |
 | `AI_WORKFLOW.md` | AI workflow note: tools, speed-ups, what was changed/rejected, how it was verified |
