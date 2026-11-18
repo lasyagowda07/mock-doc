@@ -1,5 +1,9 @@
 # Ajaia Collaborative Doc Editor — Build Plan
 
+> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 next.
+> Live: https://mock-h8rzy8iad-lasyagowda07-7344s-projects.vercel.app · Repo: github.com/lasyagowda07/mock-doc (private)
+> Demo logins (run `npm run seed`): alice@ / bob@ / carol@example.com, password `Demo-pass-123`.
+
 Stack: **Next.js (App Router, TS) + shadcn/ui + Tailwind**, **Supabase** (Auth, Postgres + RLS, Storage), **Tiptap** editor, deployed on **Vercel** (free tier). Everything must be free for reviewers.
 
 Stretch included: **Export (PDF + Markdown)** and **Role-based sharing (owner / editor / viewer)**.
@@ -42,7 +46,7 @@ Dashboard sections (the "canvas"):
 | Doc owner | 1, 4 | [ ] |
 | Grant another user access | 4 | [ ] |
 | Visible owned vs shared distinction | 1/4 | [ ] |
-| Seeded/lightweight users | 1 | [ ] |
+| Seeded/lightweight users | 1 | [x] |
 | Persistence across refresh | 2 | [ ] |
 | Formatting preserved | 2 | [ ] |
 | Shared access demonstrable | 4 | [ ] |
@@ -63,14 +67,14 @@ Dashboard sections (the "canvas"):
 
 ## Sprint 0 — Setup (≈1 hr)
 
-- [ ] `npx create-next-app` (TypeScript, Tailwind, App Router, ESLint)
-- [ ] `npx shadcn@latest init`; add: button, input, dialog, dropdown-menu, card, badge, tabs, select, toast/sonner, skeleton, avatar, tooltip, separator, alert-dialog
-- [ ] Create Supabase project (free tier); copy URL + anon key
-- [ ] Install: `@supabase/supabase-js`, `@supabase/ssr`, `@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/extension-underline`, `mammoth`, `zod`, `vitest`, `@playwright/test` (optional), `turndown` / `tiptap-markdown`, `html2pdf.js` (or `@react-pdf`/print CSS)
-- [ ] `.env.local` + `.env.example`
-- [ ] Supabase CLI + `supabase/migrations/` folder so schema is versioned and reproducible
-- [ ] Folder layout: `app/`, `components/`, `lib/supabase/`, `lib/validation/`, `lib/export/`, `lib/import/`, `supabase/migrations/`, `tests/`
-- [ ] Connect GitHub repo + Vercel project early (deploy a hello-world to de-risk)
+- [x] `npx create-next-app` (TypeScript, Tailwind, App Router, ESLint)
+- [x] `npx shadcn@latest init`; add: button, input, dialog, dropdown-menu, card, badge, tabs, select, toast/sonner, skeleton, avatar, tooltip, separator, alert-dialog
+- [x] Create Supabase project (free tier); copy URL + anon key
+- [x] Install: `@supabase/supabase-js`, `@supabase/ssr`, `@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/extension-underline`, `mammoth`, `zod`, `vitest`, `@playwright/test` (optional), `turndown` / `tiptap-markdown`, `html2pdf.js` (or `@react-pdf`/print CSS)
+- [x] `.env.local` + `.env.example`
+- [x] Supabase CLI + `supabase/migrations/` folder so schema is versioned and reproducible
+- [x] Folder layout: `app/`, `components/`, `lib/supabase/`, `lib/validation/`, `lib/export/`, `lib/import/`, `supabase/migrations/`, `tests/`
+- [x] Connect GitHub repo + Vercel project early (deploy a hello-world to de-risk)
 
 **Exit:** blank app deployed on Vercel, connected to Supabase.
 
@@ -79,28 +83,28 @@ Dashboard sections (the "canvas"):
 ## Sprint 1 — Auth + Data model (≈2–3 hrs)
 
 **Schema (migration 001)**
-- [ ] `profiles` (id → auth.users, email, display_name, created_at) + trigger to auto-create on signup
-- [ ] `documents` (id, owner_id, title, content jsonb, source text `'created' | 'uploaded'`, original_filename, created_at, updated_at)
-- [ ] `document_shares` (id, document_id, user_id, role `'editor' | 'viewer'`, created_at, unique(document_id, user_id))
+- [x] `profiles` (id → auth.users, email, display_name, created_at) + trigger to auto-create on signup
+- [x] `documents` (id, owner_id, title, content jsonb, source text `'created' | 'uploaded'`, original_filename, created_at, updated_at)
+- [x] `document_shares` (id, document_id, user_id, role `'editor' | 'viewer'`, created_at, unique(document_id, user_id))
 - [ ] `attachments` (optional: only if also doing attachments) — otherwise skip and say so
-- [ ] Indexes on `owner_id`, `document_shares.user_id`, `document_shares.document_id`
-- [ ] `updated_at` trigger
+- [x] Indexes on `owner_id`, `document_shares.user_id`, `document_shares.document_id`
+- [x] `updated_at` trigger
 
 **RLS policies**
-- [ ] `documents` SELECT: owner OR has share row
-- [ ] `documents` INSERT: owner_id = auth.uid()
-- [ ] `documents` UPDATE: owner OR share role = editor (title/content only; owner-only for deleting/sharing)
-- [ ] `documents` DELETE: owner only
-- [ ] `document_shares` SELECT: owner of doc or the shared user; INSERT/UPDATE/DELETE: doc owner only
-- [ ] `profiles` readable by authenticated users (needed for share-by-email lookup)
-- [ ] Avoid RLS recursion (use `security definer` helper functions like `can_view(doc_id)`, `can_edit(doc_id)`)
+- [x] `documents` SELECT: owner OR has share row
+- [x] `documents` INSERT: owner_id = auth.uid()
+- [x] `documents` UPDATE: owner OR share role = editor (title/content only; owner-only for deleting/sharing)
+- [x] `documents` DELETE: owner only
+- [x] `document_shares` SELECT: owner of doc or the shared user; INSERT/UPDATE/DELETE: doc owner only
+- [x] `profiles` readable by authenticated users (needed for share-by-email lookup)
+- [x] Avoid RLS recursion (use `security definer` helper functions like `can_view(doc_id)`, `can_edit(doc_id)`)
 
 **Auth UI**
-- [ ] `/login` and `/signup` pages (shadcn forms, zod validation, inline errors)
-- [ ] Supabase SSR client setup + middleware to protect routes and refresh sessions
+- [x] `/login` and `/signup` pages (server actions + zod) (shadcn forms, zod validation, inline errors)
+- [x] Supabase SSR client setup + `proxy.ts` (Next 16 renamed middleware → proxy) to protect routes and refresh sessions
 - [ ] Sign out; show current user in header
-- [ ] Redirect logic: unauthenticated → `/login`, authenticated at `/login` → `/`
-- [ ] Seed script: 3 users (e.g. `alice@`, `bob@`, `carol@` test accounts) + sample docs + one share, documented in README
+- [x] Redirect logic: unauthenticated → `/login`, authenticated at `/login` → `/`
+- [x] Seed script: 3 users (e.g. `alice@`, `bob@`, `carol@` test accounts) + sample docs + one share, documented in README
 
 **Exit:** can sign up / log in / log out; RLS verified via SQL tests with two users.
 
