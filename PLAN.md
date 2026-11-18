@@ -1,6 +1,6 @@
 # Ajaia Collaborative Doc Editor — Build Plan
 
-> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 next.
+> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 next.
 > Live: https://mock-h8rzy8iad-lasyagowda07-7344s-projects.vercel.app · Repo: github.com/lasyagowda07/mock-doc (private)
 > Demo logins (run `npm run seed`): alice@ / bob@ / carol@example.com, password `Demo-pass-123`.
 
@@ -34,21 +34,21 @@ Dashboard sections (the "canvas"):
 
 | Requirement from brief | Sprint | Done |
 |---|---|---|
-| Create new doc | 2 | [ ] |
-| Rename doc | 2 | [ ] |
-| Edit in browser | 2 | [ ] |
-| Save and reopen | 2 | [ ] |
-| Bold, italic, underline | 2 | [ ] |
-| Headings / text size | 2 | [ ] |
-| Bulleted + numbered lists | 2 | [ ] |
+| Create new doc | 2 | [x] |
+| Rename doc | 2 | [x] |
+| Edit in browser | 2 | [x] |
+| Save and reopen | 2 | [x] |
+| Bold, italic, underline | 2 | [x] |
+| Headings / text size | 2 | [x] |
+| Bulleted + numbered lists | 2 | [x] |
 | File upload → product-relevant | 3 | [ ] |
 | Supported file types stated in UI **and** README | 3, 6 | [ ] |
 | Doc owner | 1, 4 | [ ] |
 | Grant another user access | 4 | [ ] |
-| Visible owned vs shared distinction | 1/4 | [ ] |
+| Visible owned vs shared distinction | 1/4 | [x] _(badges, accent border, "Shared by", separate section)_ |
 | Seeded/lightweight users | 1 | [x] |
-| Persistence across refresh | 2 | [ ] |
-| Formatting preserved | 2 | [ ] |
+| Persistence across refresh | 2 | [x] |
+| Formatting preserved | 2 | [x] |
 | Shared access demonstrable | 4 | [ ] |
 | Setup/run instructions | 6 | [ ] |
 | Working deployment | 6 | [ ] |
@@ -113,28 +113,30 @@ Dashboard sections (the "canvas"):
 ## Sprint 2 — Dashboard + Editor core (≈4–5 hrs)
 
 **Dashboard (`/`)**
-- [ ] Header with app name, user menu, "New document" button, "Upload" button
-- [ ] Three sections: **My documents**, **Uploaded documents**, **Shared with me**
-- [ ] Doc card: title, last edited, owner (for shared), role badge, source icon
-- [ ] Empty states for each section; loading skeletons; error state
-- [ ] Sort by last updated; (nice) search box filter by title
-- [ ] Card actions menu: Open, Rename, Delete (owner only), Share (owner only), Export
+- [x] Header with app name, user menu, "New document" button, "Upload" button
+- [x] Three sections: **My documents**, **Uploaded documents**, **Shared with me**
+- [x] Doc card: title, last edited, owner (for shared), role badge, source icon
+- [x] Empty states for each section; loading skeletons; error state
+- [x] Sort by last updated; (nice) search box filter by title
+- [x] Card actions menu: Open, Rename, Delete (owner only) — _Share (Sprint 4) and Export (Sprint 5) get added to this menu later_
 
 **Create / rename / delete**
-- [ ] New doc → inserts "Untitled document" → navigates to `/docs/[id]`
-- [ ] Rename inline in editor header and from dashboard (dialog); validate non-empty, max length
-- [ ] Delete with confirm dialog (owner only)
+- [x] New doc → inserts "Untitled document" → navigates to `/docs/[id]`
+- [x] Rename inline in editor header and from dashboard (dialog); validate non-empty, max length
+- [x] Delete with confirm dialog (owner only)
 
 **Editor (`/docs/[id]`)**
-- [ ] Tiptap with: Bold, Italic, Underline, H1/H2/H3 (or paragraph/heading dropdown), bullet list, ordered list
-- [ ] Toolbar with active states + keyboard shortcuts (Ctrl/Cmd+B/I/U)
-- [ ] Load content from DB; autosave (debounced ~1s) + manual save shortcut
-- [ ] Save status: "Saving…" / "Saved" / "Error — retry"
-- [ ] Title input in header, saved independently
-- [ ] Read-only mode for viewers (toolbar disabled, "View only" badge)
-- [ ] Unsaved-changes guard on navigation/close if save pending
-- [ ] Handle not-found / no-access doc (friendly 404/403 page)
-- [ ] Basic page-like styling (centered column, readable typography)
+- [x] Tiptap with: Bold, Italic, Underline, H1/H2/H3 (or paragraph/heading dropdown), bullet list, ordered list
+- [x] Toolbar with active states + keyboard shortcuts (Ctrl/Cmd+B/I/U)
+- [x] Load content from DB; autosave (debounced ~1s) + manual save shortcut
+- [x] Save status: "Saving…" / "Saved" / "Error — retry"
+- [x] Title input in header, saved independently
+- [x] Read-only mode for viewers (toolbar disabled, "View only" badge)
+- [x] Unsaved-changes guard on navigation/close if save pending
+- [x] Handle not-found / no-access doc (friendly 404/403 page)
+- [x] Basic page-like styling (centered column, readable typography)
+
+**Decisions made:** editors may rename and edit; only owners share/delete. Autosave is last-write-wins. Next 16's `cacheComponents` was turned off (everything is per-user dynamic). Playwright E2E lives in `tests/e2e` (`npm run test:e2e`).
 
 **Exit:** create → edit with formatting → refresh → content + formatting intact.
 

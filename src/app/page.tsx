@@ -1,24 +1,21 @@
-import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
-import { signOut } from "./(auth)/actions";
+import { redirect } from "next/navigation";
+import { AppHeader } from "@/components/app-header";
+import { Dashboard } from "@/components/dashboard";
+import { getCurrentUser, listDocuments } from "@/lib/documents";
 
-// Placeholder until the Sprint 2 dashboard.
+export const metadata = { title: "My documents · Ajaia Docs" };
+
 export default async function Home() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("display_name, email")
-    .eq("id", data.user!.id)
-    .single();
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+  const docs = await listDocuments(user.id);
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
-      <h1 className="text-2xl font-semibold">Hello, {profile?.display_name}</h1>
-      <p className="text-muted-foreground">{profile?.email}</p>
-      <form action={signOut}>
-        <Button variant="outline">Sign out</Button>
-      </form>
-    </main>
+    <>
+      <AppHeader name={user.display_name} email={user.email} />
+      <main className="mx-auto w-full max-w-6xl flex-1 space-y-2 p-4 py-8">
+        <Dashboard docs={docs} />
+      </main>
+    </>
   );
 }
