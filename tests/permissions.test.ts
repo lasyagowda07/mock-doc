@@ -30,3 +30,19 @@ describe("document validation", () => {
     expect(updateDocumentSchema.safeParse({ title: "A" }).success).toBe(true);
   });
 });
+
+import { shareInputSchema } from "@/lib/validation/sharing";
+
+describe("share validation", () => {
+  it("normalizes the email and only allows editor/viewer", () => {
+    expect(shareInputSchema.parse({ email: "  Bob@Example.com ", role: "editor" })).toEqual({ email: "bob@example.com", role: "editor" });
+    expect(shareInputSchema.safeParse({ email: "nope", role: "viewer" }).success).toBe(false);
+    expect(shareInputSchema.safeParse({ email: "a@b.co", role: "owner" }).success).toBe(false);
+  });
+});
+
+import { loginSchema } from "@/lib/validation/auth";
+
+it("login accepts an email with stray whitespace and capitals", () => {
+  expect(loginSchema.parse({ email: " Alice@Example.com ", password: "x" }).email).toBe("alice@example.com");
+});

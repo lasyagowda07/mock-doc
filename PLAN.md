@@ -1,6 +1,6 @@
 # Ajaia Collaborative Doc Editor — Build Plan
 
-> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 next.
+> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 next.
 > Live: https://mock-h8rzy8iad-lasyagowda07-7344s-projects.vercel.app · Repo: github.com/lasyagowda07/mock-doc (private)
 > Demo logins (run `npm run seed`): alice@ / bob@ / carol@example.com, password `Demo-pass-123`.
 
@@ -43,13 +43,13 @@ Dashboard sections (the "canvas"):
 | Bulleted + numbered lists | 2 | [x] |
 | File upload → product-relevant | 3 | [x] |
 | Supported file types stated in UI **and** README | 3, 6 | UI [x] · README [ ] |
-| Doc owner | 1, 4 | [ ] |
-| Grant another user access | 4 | [ ] |
+| Doc owner | 1, 4 | [x] |
+| Grant another user access | 4 | [x] |
 | Visible owned vs shared distinction | 1/4 | [x] _(badges, accent border, "Shared by", separate section)_ |
 | Seeded/lightweight users | 1 | [x] |
 | Persistence across refresh | 2 | [x] |
 | Formatting preserved | 2 | [x] |
-| Shared access demonstrable | 4 | [ ] |
+| Shared access demonstrable | 4 | [x] |
 | Setup/run instructions | 6 | [ ] |
 | Working deployment | 6 | [ ] |
 | Validation + error handling | 5 | [ ] |
@@ -58,7 +58,7 @@ Dashboard sections (the "canvas"):
 | AI workflow note | 6 | [ ] |
 | Walkthrough video (3–5 min) | 7 | [ ] |
 | Export PDF / Markdown (stretch) | 5 | [ ] |
-| Role-based permissions (stretch) | 4 | [ ] |
+| Role-based permissions (stretch) | 4 | [x] |
 | README: working / incomplete / next 2–4 hrs | 6 | [ ] |
 | SUBMISSION.md, creds, video URL txt, screenshots | 7 | [ ] |
 | Google Drive folder | 7 | [ ] |
@@ -164,17 +164,19 @@ Dashboard sections (the "canvas"):
 
 ## Sprint 4 — Sharing + role-based permissions (≈3–4 hrs)
 
-- [ ] Share dialog on doc (owner only), also from dashboard menu
-- [ ] Add person by email → looks up in `profiles`; error if user doesn't exist ("They need to sign up first")
-- [ ] Role select on add: **Editor** / **Viewer**
-- [ ] List current collaborators with role dropdown (change role) and remove button
-- [ ] Prevent: sharing with self, duplicate shares, non-owner managing shares
-- [ ] **Shared with me** section shows owner name/email + role badge
-- [ ] Owned vs shared visibly distinct (badge "Owner" / "Editor" / "Viewer", different section, different card accent)
-- [ ] Editor page shows role + owner; viewers get read-only editor; editors can edit but not share/delete/rename (decide: editors may rename — pick one, document it)
-- [ ] Server-side enforcement (RLS) confirmed: viewer cannot update via direct API call
-- [ ] Revoked access → doc disappears from recipient's dashboard; open tab shows access-lost message on next load/save
-- [ ] (Nice) Realtime refresh of dashboard when a share is added (Supabase Realtime) — only if time
+- [x] Share dialog on doc (owner only), also from dashboard menu
+- [x] Add person by email → looks up in `profiles`; error if user doesn't exist ("They need to sign up first")
+- [x] Role select on add: **Editor** / **Viewer**
+- [x] List current collaborators with role dropdown (change role) and remove button
+- [x] Prevent: sharing with self, duplicate shares, non-owner managing shares
+- [x] **Shared with me** section shows owner name/email + role badge
+- [x] Owned vs shared visibly distinct (badge "Owner" / "Editor" / "Viewer", different section, different card accent)
+- [x] Editor page shows role + owner; viewers get read-only editor; editors can edit but not share/delete/rename (decide: editors may rename — pick one, document it)
+- [x] Server-side enforcement (RLS) confirmed: viewer cannot update via direct API call
+- [x] Revoked access → doc disappears from recipient's dashboard; open tab shows access-lost message on next load/save
+- [ ] ~~(Nice) Realtime dashboard refresh on new shares~~ — skipped; recipients see new shares on next load
+
+**Decisions made:** share by email only (recipient must already have an account; error says so); editors can edit + rename, only the owner shares/deletes; roles enforced by RLS and mirrored in `src/lib/permissions.ts`. Revoking/downgrading while a doc is open surfaces "Not saved — you no longer have permission" on the next autosave. Known trade-off: any signed-in user can look up emails via `profiles` (needed for share-by-email; fine for this scope). Found+fixed a bug where zod validated email format before trimming (also affected login).
 
 **Exit:** Alice shares with Bob as viewer → Bob sees read-only; change to editor → Bob can edit; remove → gone.
 

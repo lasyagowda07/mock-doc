@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { FileText, FileUp, MoreVertical, Pencil, Trash2, Users } from "lucide-react";
+import { FileText, FileUp, MoreVertical, Pencil, Share2, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,12 +20,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { deleteDocument, renameDocument } from "@/app/docs/actions";
 import { TimeAgo } from "@/components/time-ago";
-import { canDelete, canRename, roleLabel } from "@/lib/permissions";
+import { ShareDialog } from "@/components/share-dialog";
+import { canDelete, canRename, canShare, roleLabel } from "@/lib/permissions";
 import type { DocListItem } from "@/lib/types";
 
 export function DocumentCard({ doc }: { doc: DocListItem }) {
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [title, setTitle] = useState(doc.title);
   const [pending, startTransition] = useTransition();
   const Icon = doc.source === "uploaded" ? FileUp : FileText;
@@ -80,6 +82,11 @@ export function DocumentCard({ doc }: { doc: DocListItem }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem render={<Link href={`/docs/${doc.id}`} />}>Open</DropdownMenuItem>
+          {canShare(doc.role) && (
+            <DropdownMenuItem onClick={() => setShareOpen(true)}>
+              <Share2 /> Share
+            </DropdownMenuItem>
+          )}
           {canRename(doc.role) && (
             <DropdownMenuItem onClick={() => { setTitle(doc.title); setRenameOpen(true); }}>
               <Pencil /> Rename
@@ -110,6 +117,8 @@ export function DocumentCard({ doc }: { doc: DocListItem }) {
           </form>
         </DialogContent>
       </Dialog>
+
+      {canShare(doc.role) && <ShareDialog docId={doc.id} title={doc.title} open={shareOpen} onOpenChange={setShareOpen} />}
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
