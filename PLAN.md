@@ -102,7 +102,7 @@ Dashboard sections (the "canvas"):
 **Auth UI**
 - [x] `/login` and `/signup` pages (server actions + zod) (shadcn forms, zod validation, inline errors)
 - [x] Supabase SSR client setup + `proxy.ts` (Next 16 renamed middleware → proxy) to protect routes and refresh sessions
-- [ ] Sign out; show current user in header
+- [x] Sign out; show current user in header (user menu)
 - [x] Redirect logic: unauthenticated → `/login`, authenticated at `/login` → `/`
 - [x] Seed script: 3 users (e.g. `alice@`, `bob@`, `carol@` test accounts) + sample docs + one share, documented in README
 
