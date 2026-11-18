@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Download, FileText, FileUp, MoreVertical, Pencil, Printer, Share2, Trash2, Users } from "lucide-react";
+import { Download, FileUp, MoreVertical, Pencil, Printer, Share2, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -21,6 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { deleteDocument, exportMarkdown, renameDocument } from "@/app/docs/actions";
 import { downloadText } from "@/lib/export/download";
+import { DocPreview } from "@/components/doc-preview";
+import { itemVariants } from "@/components/motion";
 import { TimeAgo } from "@/components/time-ago";
 import { ShareDialog } from "@/components/share-dialog";
 import { canDelete, canRename, canShare, roleLabel } from "@/lib/permissions";
@@ -33,8 +34,7 @@ export function DocumentCard({ doc }: { doc: DocListItem }) {
   const [title, setTitle] = useState(doc.title);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
-  const Icon = doc.source === "uploaded" ? FileUp : FileText;
-  const isShared = doc.role !== "owner";
+    const isShared = doc.role !== "owner";
 
   function submitRename(e: React.FormEvent) {
     e.preventDefault();
@@ -62,31 +62,51 @@ export function DocumentCard({ doc }: { doc: DocListItem }) {
     });
   }
 
+  const tint = isShared ? "bg-lavender" : doc.source === "uploaded" ? "bg-sage" : "bg-peach";
+  const roleChip = { owner: "bg-peach text-peach-ink", editor: "bg-sage text-sage-ink", viewer: "bg-lavender text-lavender-ink" }[doc.role];
+
   return (
-    <Card className={`group relative p-0 transition-shadow hover:shadow-md ${isShared ? "border-l-4 border-l-blue-500" : ""}`}>
-      <Link href={`/docs/${doc.id}`} className="flex flex-col gap-3 rounded-xl p-4 pr-12 outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
-        <div className="flex h-24 items-center justify-center rounded-md bg-muted text-muted-foreground">
-          <Icon className="size-8" />
-        </div>
-        <div className="min-w-0">
-          <h3 className="truncate font-medium" title={doc.title}>{doc.title}</h3>
-          <p className="text-xs text-muted-foreground">
-            Edited <TimeAgo iso={doc.updatedAt} />
-          </p>
-          {isShared && <p className="truncate text-xs text-muted-foreground">Shared by {doc.ownerName}</p>}
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          <Badge variant={isShared ? "secondary" : "outline"}>{roleLabel[doc.role]}</Badge>
-          {doc.shareCount > 0 && (
-            <Badge variant="outline">
-              <Users /> {doc.shareCount}
-            </Badge>
-          )}
-        </div>
-      </Link>
+    <motion.div
+      layout
+      variants={itemVariants}
+      exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.18 } }}
+      whileHover={{ y: -5 }}
+      className="group relative"
+    >
+      <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft transition-shadow duration-300 group-hover:shadow-lift">
+        <Link href={`/docs/${doc.id}`} className="block outline-none focus-visible:ring-3 focus-visible:ring-ring/60 rounded-2xl">
+          <div className={`relative h-44 overflow-hidden p-4 pb-0 ${tint}`}>
+            <div className="h-full origin-bottom transition-transform duration-300 ease-out group-hover:-rotate-[0.8deg] group-hover:scale-[1.035]">
+              <DocPreview preview={doc.preview} />
+            </div>
+            {doc.source === "uploaded" && (
+              <span className="absolute bottom-2.5 left-5 flex items-center gap-1 rounded-full bg-card/90 px-2 py-0.5 text-[11px] font-medium text-sage-ink shadow-soft">
+                <FileUp className="size-3" /> Imported
+              </span>
+            )}
+          </div>
+          <div className="space-y-2.5 p-4">
+            <div className="min-w-0">
+              <h3 className="truncate font-display text-[17px] font-semibold leading-snug" title={doc.title}>{doc.title}</h3>
+              <p className="text-xs text-muted-foreground">
+                Edited <TimeAgo iso={doc.updatedAt} />
+                {isShared && <span> · Shared by {doc.ownerName}</span>}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${roleChip}`}>{roleLabel[doc.role]}</span>
+              {doc.shareCount > 0 && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-butter px-2.5 py-0.5 text-xs font-medium text-butter-ink">
+                  <Users className="size-3" /> {doc.shareCount}
+                </span>
+              )}
+            </div>
+          </div>
+        </Link>
+      </div>
 
       <DropdownMenu>
-        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label={`Actions for ${doc.title}`} className="absolute right-2 top-2" />}>
+        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label={`Actions for ${doc.title}`} className="absolute right-3 top-3 rounded-full bg-card/90 shadow-soft transition-opacity hover:bg-card md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 md:focus-visible:opacity-100 data-[popup-open]:opacity-100" />}>
           <MoreVertical />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
@@ -149,6 +169,6 @@ export function DocumentCard({ doc }: { doc: DocListItem }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </Card>
+    </motion.div>
   );
 }

@@ -7,7 +7,7 @@ test("dashboard shows the three sections with owned vs shared distinction", asyn
   await expect(page.getByRole("heading", { name: /Shared with me/ })).toBeVisible();
 
   const mine = page.locator("section", { has: page.getByRole("heading", { name: /My documents/ }) });
-  await expect(mine.getByText("Q1 Product Roadmap")).toBeVisible();
+  await expect(mine.getByRole("heading", { name: "Q1 Product Roadmap" })).toBeVisible();
 
   const shared = page.locator("section", { has: page.getByRole("heading", { name: /Shared with me/ }) });
   const card = shared.locator("a", { hasText: "Bob's launch ideas" });

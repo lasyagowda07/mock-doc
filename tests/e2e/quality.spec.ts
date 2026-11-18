@@ -7,6 +7,8 @@ function trackErrors(page: Page) {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(`pageerror: ${e.message}`));
   page.on("console", (m) => {
+    // Framer Motion logs this dev-only notice when the (emulated) OS prefers reduced motion; honoring it is intended.
+    if (/Reduced Motion enabled/.test(m.text())) return;
     if (m.type() === "error" || m.type() === "warning") errors.push(`${m.type()}: ${m.text()}`);
   });
   return errors;
@@ -15,6 +17,7 @@ function trackErrors(page: Page) {
 async function expectAccessible(page: Page, label: string) {
   // Scan the settled UI: dialogs and menus fade in, and mid-fade colors give false contrast failures.
   await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => null))));
+  await page.waitForTimeout(1500); // framer-motion springs aren't visible to getAnimations()
   const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
   expect(violations.map((v) => `${label}: ${v.id} (${v.nodes.length}) ${v.help}`), label).toEqual([]);
 }
@@ -23,7 +26,7 @@ test("auth pages are accessible and error-free", async ({ page }) => {
   const errors = trackErrors(page);
   await page.goto("/login");
   await expectAccessible(page, "login");
-  await page.getByRole("button", { name: "Log in" }).click();
+  await page.getByRole("button", { name: "Log in", exact: true }).click();
   await expect(page.getByText("Enter a valid email address")).toBeVisible();
   await expectAccessible(page, "login with errors");
   await page.goto("/signup");
@@ -89,14 +92,14 @@ test("a new user can sign up, land on an empty dashboard, log out and back in", 
     await page.goto("/signup");
     await page.getByLabel("Name").fill("Sam Reviewer");
     await page.getByLabel("Email").fill(email);
-    await page.getByLabel("Password").fill("short");
+    await page.getByLabel("Password", { exact: true }).fill("short");
     await page.getByRole("button", { name: "Sign up" }).click();
     await expect(page.getByText("at least 8 characters")).toBeVisible();
     // A failed submit must not wipe what the user typed (except the password).
     await expect(page.getByLabel("Name")).toHaveValue("Sam Reviewer");
     await expect(page.getByLabel("Email")).toHaveValue(email);
 
-    await page.getByLabel("Password").fill(PASSWORD);
+    await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
     await page.getByRole("button", { name: "Sign up" }).click();
     await expect(page.getByRole("heading", { name: /My documents/ })).toBeVisible();
     await expect(page.getByText("Nothing here yet")).toBeVisible();

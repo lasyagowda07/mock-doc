@@ -13,8 +13,8 @@ export default async function Home() {
   return (
     <>
       <AppHeader name={user.display_name} email={user.email} />
-      <main className="mx-auto w-full max-w-6xl flex-1 space-y-2 p-4 py-8">
-        <Dashboard docs={docs} />
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-10">
+        <Dashboard docs={docs} firstName={user.display_name.split(" ")[0]} />
       </main>
     </>
   );

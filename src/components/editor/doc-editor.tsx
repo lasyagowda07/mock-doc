@@ -2,43 +2,26 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { EditorContent, type JSONContent, useEditor } from "@tiptap/react";
 
-import { AlertCircle, Check, Download, Eye, FileText, Loader2, Printer, Share2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Download, Eye, Printer, Share2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserMenu } from "@/components/user-menu";
 import { Toolbar } from "@/components/editor/toolbar";
-import { type SaveStatus, useAutosave } from "@/components/editor/use-autosave";
+import { SaveStatusIndicator } from "@/components/editor/save-status";
+import { useAutosave } from "@/components/editor/use-autosave";
+import { HeaderShell } from "@/components/header-shell";
+import { LogoMark } from "@/components/logo";
+import { Pressable } from "@/components/motion";
 import { editorExtensions } from "@/lib/editor-extensions";
 import { downloadText, printAsPdf } from "@/lib/export/download";
 import { docToMarkdown, exportFilename } from "@/lib/export/markdown";
 import { ShareDialog } from "@/components/share-dialog";
 import { canEdit, canRename, canShare, roleLabel } from "@/lib/permissions";
 import type { DocDetail } from "@/lib/types";
-
-function StatusIndicator({ status, error, onRetry }: { status: SaveStatus; error: string | null; onRetry: () => void }) {
-  if (status === "error")
-    return (
-      <span className="flex items-center gap-1.5 text-sm text-destructive" role="alert" title={error ?? undefined}>
-        <AlertCircle className="size-4 shrink-0" /> <span className="max-w-64 truncate">Not saved{error ? ` — ${error}` : ""}</span>
-        <Button size="xs" variant="outline" onClick={onRetry}>Retry</Button>
-      </span>
-    );
-  if (status === "saving" || status === "unsaved")
-    return (
-      <span className="flex items-center gap-1.5 text-sm text-muted-foreground" aria-live="polite">
-        <Loader2 className="size-4 animate-spin" /> Saving…
-      </span>
-    );
-  return (
-    <span className="flex items-center gap-1.5 text-sm text-muted-foreground" aria-live="polite">
-      <Check className="size-4" /> Saved
-    </span>
-  );
-}
 
 export function DocEditor({ doc, user, autoPrint = false }: { doc: DocDetail; user: { name: string; email: string }; autoPrint?: boolean }) {
   const editable = canEdit(doc.role);
@@ -93,11 +76,11 @@ export function DocEditor({ doc, user, autoPrint = false }: { doc: DocDetail; us
   }
 
   return (
-    <div className="flex min-h-svh flex-col bg-muted/30 print:bg-white">
-      <header className="sticky top-0 z-10 bg-background print:hidden">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b px-4 py-2 sm:h-14 sm:flex-nowrap sm:py-0">
-          <Link href="/" aria-label="Back to documents" className="text-muted-foreground hover:text-foreground">
-            <FileText className="size-6" />
+    <div className="flex min-h-svh flex-col print:bg-white">
+      <HeaderShell>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5 sm:h-16 sm:flex-nowrap sm:py-0">
+          <Link href="/" aria-label="Back to documents" className="rounded-lg outline-none transition-transform hover:-rotate-6 hover:scale-105 focus-visible:ring-3 focus-visible:ring-ring/50">
+            <LogoMark className="size-8" />
           </Link>
           <Input
             value={title}
@@ -106,42 +89,51 @@ export function DocEditor({ doc, user, autoPrint = false }: { doc: DocDetail; us
             disabled={!canRename(doc.role)}
             maxLength={200}
             aria-label="Document title"
-            className="order-last h-9 w-full border-transparent bg-transparent text-base font-medium hover:border-input focus-visible:border-ring sm:order-none sm:w-auto sm:max-w-md sm:flex-1"
+            className="order-last h-10 w-full rounded-xl border-transparent bg-transparent px-2 font-display text-xl font-semibold md:text-xl hover:border-input hover:bg-card/60 focus-visible:border-ring focus-visible:bg-card disabled:opacity-100 sm:order-none sm:w-auto sm:max-w-md sm:flex-1"
           />
-          <Badge variant={doc.role === "owner" ? "outline" : "secondary"}>
-            {!editable && <Eye />} {roleLabel[doc.role]}
+          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${{ owner: "bg-peach text-peach-ink", editor: "bg-sage text-sage-ink", viewer: "bg-lavender text-lavender-ink" }[doc.role]}`}>
+            {!editable && <Eye className="size-3" />} {roleLabel[doc.role]}
             {doc.role !== "owner" && ` · shared by ${doc.ownerName}`}
-          </Badge>
+          </span>
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
-            {editable ? <StatusIndicator status={status} error={error} onRetry={saveNow} /> : (
+            {editable ? (
+              <SaveStatusIndicator status={status} error={error} onRetry={saveNow} />
+            ) : (
               <span className="text-sm text-muted-foreground">View only</span>
             )}
             <DropdownMenu>
-              <DropdownMenuTrigger render={<Button variant="outline" />}>
+              <DropdownMenuTrigger render={<Button variant="outline" className="h-9 rounded-full bg-card/80 px-4" />}>
                 <Download /> <span className="max-sm:sr-only">Export</span>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={exportMarkdown}><Download /> Markdown (.md)</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => printAsPdf(lastValidTitle.current)}><Printer /> PDF (print dialog)</DropdownMenuItem>
+              <DropdownMenuContent align="end" className="rounded-xl p-1.5">
+                <DropdownMenuItem className="rounded-lg" onClick={exportMarkdown}><Download /> Markdown (.md)</DropdownMenuItem>
+                <DropdownMenuItem className="rounded-lg" onClick={() => printAsPdf(lastValidTitle.current)}><Printer /> PDF (print dialog)</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             {canShare(doc.role) && (
               <>
-                <Button variant="outline" onClick={() => setShareOpen(true)}>
-                  <Share2 /> <span className="max-sm:sr-only">Share</span>
-                </Button>
+                <Pressable>
+                  <Button className="h-9 rounded-full px-4 shadow-soft" onClick={() => setShareOpen(true)}>
+                    <Share2 /> <span className="max-sm:sr-only">Share</span>
+                  </Button>
+                </Pressable>
                 <ShareDialog docId={doc.id} title={title} open={shareOpen} onOpenChange={setShareOpen} />
               </>
             )}
             <UserMenu name={user.name} email={user.email} />
           </div>
         </div>
-        {editor && editable && <Toolbar editor={editor} />}
-      </header>
-      <main className="flex-1 px-4 py-8 print:p-0">
-        <div className="mx-auto min-h-[60vh] max-w-3xl rounded-lg border bg-background p-8 shadow-sm sm:p-12 print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none">
+        {editor && editable && <div className="px-4 pb-3"><Toolbar editor={editor} /></div>}
+      </HeaderShell>
+      <main className="flex-1 px-4 pb-20 pt-8 print:p-0">
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut", delay: 0.05 }}
+          className="mx-auto min-h-[65vh] max-w-3xl rounded-2xl border border-border/60 bg-card p-8 shadow-soft sm:p-14 print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none"
+        >
           <EditorContent editor={editor} />
-        </div>
+        </motion.div>
       </main>
     </div>
   );

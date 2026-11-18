@@ -23,7 +23,7 @@ export async function listDocuments(userId: string): Promise<DocListItem[]> {
   const { data, error } = await supabase
     .from("documents")
     .select(
-      "id, title, source, updated_at, owner_id, owner:profiles!documents_owner_id_fkey(display_name, email), document_shares(user_id, role)",
+      "id, title, source, updated_at, owner_id, preview, owner:profiles!documents_owner_id_fkey(display_name, email), document_shares(user_id, role)",
     )
     .order("updated_at", { ascending: false });
   if (error) throw new Error(error.message);
@@ -42,6 +42,7 @@ export async function listDocuments(userId: string): Promise<DocListItem[]> {
       ownerName: owner?.display_name ?? "Unknown",
       ownerEmail: owner?.email ?? "",
       shareCount: d.owner_id === userId ? shares.length : 0,
+      preview: d.preview,
     };
   });
 }

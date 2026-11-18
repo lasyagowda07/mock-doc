@@ -15,8 +15,9 @@ function ToolButton({ label, shortcut, active, disabled, onClick, children }: {
         render={
           <Button
             type="button"
-            variant={active ? "secondary" : "ghost"}
+            variant="ghost"
             size="icon"
+            className={`rounded-lg transition-all duration-150 active:scale-90 ${active ? "bg-primary/12 text-primary hover:bg-primary/18" : "text-foreground/75"}`}
             aria-label={label}
             aria-pressed={active}
             disabled={disabled}
@@ -52,18 +53,18 @@ export function Toolbar({ editor }: { editor: Editor }) {
   const mod = typeof navigator !== "undefined" && /Mac/.test(navigator.platform) ? "⌘" : "Ctrl+";
 
   return (
-    <div role="toolbar" aria-label="Formatting" className="flex flex-wrap items-center gap-1 border-b bg-background px-4 py-1.5">
+    <div role="toolbar" aria-label="Formatting" className="mx-auto flex w-fit max-w-full flex-wrap items-center justify-center gap-0.5 rounded-2xl border border-border/70 bg-card/90 p-1 shadow-soft">
       <ToolButton label="Undo" shortcut={`${mod}Z`} disabled={!s.canUndo} onClick={() => chain().undo().run()}><Undo2 /></ToolButton>
       <ToolButton label="Redo" shortcut={`${mod}⇧Z`} disabled={!s.canRedo} onClick={() => chain().redo().run()}><Redo2 /></ToolButton>
-      <Separator orientation="vertical" className="mx-1 h-6" />
+      <Separator orientation="vertical" className="mx-1 h-5" />
       <ToolButton label="Bold" shortcut={`${mod}B`} active={s.bold} onClick={() => chain().toggleBold().run()}><Bold /></ToolButton>
       <ToolButton label="Italic" shortcut={`${mod}I`} active={s.italic} onClick={() => chain().toggleItalic().run()}><Italic /></ToolButton>
       <ToolButton label="Underline" shortcut={`${mod}U`} active={s.underline} onClick={() => chain().toggleUnderline().run()}><Underline /></ToolButton>
-      <Separator orientation="vertical" className="mx-1 h-6" />
+      <Separator orientation="vertical" className="mx-1 h-5" />
       <ToolButton label="Heading 1" active={s.h1} onClick={() => chain().toggleHeading({ level: 1 }).run()}><Heading1 /></ToolButton>
       <ToolButton label="Heading 2" active={s.h2} onClick={() => chain().toggleHeading({ level: 2 }).run()}><Heading2 /></ToolButton>
       <ToolButton label="Heading 3" active={s.h3} onClick={() => chain().toggleHeading({ level: 3 }).run()}><Heading3 /></ToolButton>
-      <Separator orientation="vertical" className="mx-1 h-6" />
+      <Separator orientation="vertical" className="mx-1 h-5" />
       <ToolButton label="Bulleted list" active={s.bullet} onClick={() => chain().toggleBulletList().run()}><List /></ToolButton>
       <ToolButton label="Numbered list" active={s.ordered} onClick={() => chain().toggleOrderedList().run()}><ListOrdered /></ToolButton>
     </div>

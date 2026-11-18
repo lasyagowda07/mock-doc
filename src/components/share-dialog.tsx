@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Trash2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { tintFor } from "@/components/user-menu";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -95,7 +97,7 @@ export function ShareDialog({ docId, title, open, onOpenChange }: {
             className="flex-1"
           />
           <RoleSelect value={role} onChange={setRole} label="Role for new person" />
-          <Button type="submit" disabled={pending || !email.trim()}>
+          <Button type="submit" className="rounded-full" disabled={pending || !email.trim()}>
             <UserPlus /> Share
           </Button>
         </form>
@@ -108,10 +110,18 @@ export function ShareDialog({ docId, title, open, onOpenChange }: {
           ) : people.length === 0 ? (
             <p className="py-3 text-sm text-muted-foreground">Only you have access right now.</p>
           ) : (
-            <ul className="divide-y">
+            <ul>
+              <AnimatePresence initial={false} mode="popLayout">
               {people.map((p) => (
-                <li key={p.userId} className="flex items-center gap-3 py-2">
-                  <Avatar size="sm"><AvatarFallback>{p.name.slice(0, 1).toUpperCase()}</AvatarFallback></Avatar>
+                <motion.li
+                  key={p.userId}
+                  layout
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 16, transition: { duration: 0.15 } }}
+                  className="flex items-center gap-3 rounded-xl px-1 py-2 hover:bg-muted/60"
+                >
+                  <Avatar><AvatarFallback className={`font-semibold ${tintFor(p.name)}`}>{p.name.slice(0, 1).toUpperCase()}</AvatarFallback></Avatar>
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium">{p.name}</div>
                     <div className="truncate text-xs text-muted-foreground">{p.email}</div>
@@ -128,8 +138,9 @@ export function ShareDialog({ docId, title, open, onOpenChange }: {
                   >
                     <Trash2 />
                   </Button>
-                </li>
+                </motion.li>
               ))}
+              </AnimatePresence>
             </ul>
           )}
         </div>

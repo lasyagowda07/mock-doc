@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { FileUp, Upload } from "lucide-react";
+import { motion } from "framer-motion";
+import { CheckCircle2, FileUp, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,7 +53,7 @@ export function UploadDialog() {
 
   return (
     <Dialog open={open} onOpenChange={reset}>
-      <DialogTrigger render={<Button variant="outline" />}>
+      <DialogTrigger render={<Button variant="outline" className="h-9 rounded-full bg-card/80 px-4" />}>
         <Upload /> <span className="max-sm:sr-only">Upload</span>
       </DialogTrigger>
       <DialogContent>
@@ -62,18 +63,27 @@ export function UploadDialog() {
             <DialogDescription>Turn a file into a new editable document.</DialogDescription>
           </DialogHeader>
 
-          <label
+          <motion.label
             htmlFor="upload-file"
             onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
             onDragLeave={() => setDragging(false)}
             onDrop={(e) => { e.preventDefault(); setDragging(false); choose(e.dataTransfer.files[0]); }}
-            className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed p-8 text-center transition-colors focus-within:ring-3 focus-within:ring-ring/50 ${dragging ? "border-primary bg-muted" : "hover:bg-muted/50"}`}
+            animate={{ scale: dragging ? 1.025 : 1 }}
+            whileHover={{ scale: 1.01 }}
+            className={`flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed p-9 text-center transition-colors focus-within:ring-3 focus-within:ring-ring/50 ${dragging ? "border-primary bg-peach/60" : "border-border bg-muted/40 hover:bg-peach/30"}`}
           >
-            <FileUp className="size-8 text-muted-foreground" />
+            <motion.span
+              key={file ? "file" : "empty"}
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1, y: dragging ? -6 : 0 }}
+              className={`grid size-14 place-items-center rounded-2xl ${file ? "bg-sage text-sage-ink" : "bg-peach text-peach-ink"}`}
+            >
+              {file ? <CheckCircle2 className="size-7" /> : <FileUp className="size-7" />}
+            </motion.span>
             {file ? (
               <span className="font-medium">{file.name} <span className="font-normal text-muted-foreground">({Math.ceil(file.size / 1024)} KB)</span></span>
             ) : (
-              <span className="text-sm">Drag a file here, or <span className="font-medium underline underline-offset-4">browse</span></span>
+              <span className="text-sm">Drag a file here, or <span className="font-semibold text-primary underline underline-offset-4">browse</span></span>
             )}
             <input
               id="upload-file"
@@ -82,13 +92,13 @@ export function UploadDialog() {
               className="sr-only"
               onChange={(e) => { choose(e.target.files?.[0]); e.target.value = ""; }}
             />
-          </label>
+          </motion.label>
 
           <p className="text-xs text-muted-foreground">{UPLOAD_HELP}</p>
           {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
 
           <DialogFooter>
-            <Button type="submit" disabled={!file || pending}>{pending ? "Importing…" : "Import"}</Button>
+            <Button type="submit" className="rounded-full" disabled={!file || pending}>{pending ? "Importing…" : "Import"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

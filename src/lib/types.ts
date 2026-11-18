@@ -12,6 +12,7 @@ export type DocListItem = {
   ownerName: string;
   ownerEmail: string;
   shareCount: number;
+  preview: JSONContent;
 };
 
 export type DocDetail = {
