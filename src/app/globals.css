@@ -144,11 +144,18 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /* Soft pastel wash behind everything (a fixed layer works on iOS too, unlike background-attachment) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
     background-image:
       radial-gradient(900px 480px at 8% -8%, oklch(0.93 0.06 60 / 0.55), transparent 60%),
       radial-gradient(800px 460px at 100% 0%, oklch(0.94 0.045 295 / 0.45), transparent 60%),
       radial-gradient(700px 500px at 50% 110%, oklch(0.95 0.05 150 / 0.35), transparent 60%);
-    background-attachment: fixed;
   }
   h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
   html {

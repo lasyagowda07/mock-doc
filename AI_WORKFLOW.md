@@ -19,7 +19,7 @@
 - **Scaffolding and wiring:** Next 16 + shadcn + Supabase SSR auth + route protection in minutes instead of hours.
 - **Schema and RLS:** drafted tables, policies and `SECURITY DEFINER` helpers, then proved them with a database test using real users.
 - **Editor and converters:** Tiptap toolbar, autosave state machine, `.txt/.md/.docx` import, Markdown serializer.
-- **Tests:** 54 automated tests (35 unit/database + 19 Playwright), including two-user sharing scenarios that would have been tedious to hand-write.
+- **Tests:** 59 automated tests (40 unit/database + 19 Playwright), including two-user sharing scenarios that would have been tedious to hand-write.
 - **Ops chores:** finding the right Supabase pooler region (the direct DB host is IPv6-only), Vercel env vars across environments, GitHub integration.
 
 ## What AI got wrong, and what I changed or rejected
@@ -38,6 +38,10 @@ Every item below was a real defect or a rejected suggestion in this build:
 | 8 | **Phone layout** of the editor header | Overflowed horizontally (title input vanished, Share cut off). Found in a phone-width screenshot; fixed with a wrapping header and icon-only buttons. |
 | 9 | **My own E2E test** clicked Delete without waiting | Leaked "Untitled document" rows into the database. Fixed with unique titles and an assertion; cleaned the rows. |
 | 10 | **Axe scans mid-animation** reported false contrast failures | Added a wait for animations to settle before scanning (stricter and non-flaky, not a relaxed rule). |
+| 11 | **Visual redesign** (new theme, Framer Motion, thumbnails): the demo-login buttons used an `aria-label` that didn't contain their visible text | Axe flagged it; switched to a visible-text accessible name. The new "Log in as…" buttons also broke every E2E login (substring match), so tests now match exactly. |
+| 12 | **Animated save indicator** cross-faded, leaving the old "Saved" label on screen for ~160 ms | A sharing test passed a save-wait too early and read stale data. I exposed the true state as `data-save-status` and wait on that instead of on the label. |
+| 13 | **Failed test runs leaked data** into the demo accounts (again) | Added a Playwright global teardown that cleans test documents in the demo accounts after every run, scoped so real users' documents are never touched. |
+| 14 | **`background-attachment: fixed`** for the pastel wash | Looked wrong in full-page screenshots and is unreliable on iOS; replaced with a fixed pseudo-element layer. |
 
 ## How I verified correctness, UX quality and reliability
 

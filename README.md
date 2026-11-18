@@ -10,11 +10,16 @@ A small full-stack, Google-Docs-inspired editor: create and edit rich-text docum
 | `bob@example.com` | `Demo-pass-123` | **Editor** on Alice's *Q1 Product Roadmap*, **viewer** on *Meeting notes* |
 | `carol@example.com` | `Demo-pass-123` | **Viewer** on *Q1 Product Roadmap* |
 
-You can also create your own account at `/signup` (no email confirmation needed).
+You can also create your own account at `/signup` (no email confirmation needed). On the login page, the **Alice / Bob / Carol** buttons log you in with one click.
 
 > **Quick sharing demo:** open two browsers (or one normal + one private window), log in as Alice in one and Bob in the other. Alice: open *Q1 Product Roadmap* → **Share** → change Bob's role or remove him. Bob: refresh to see the change.
 
-![Dashboard](docs/screenshots/02-dashboard.png)
+![Dashboard](docs/screenshots/03-dashboard.png)
+
+| | |
+|---|---|
+| ![Login](docs/screenshots/01-login.png) | ![Editor](docs/screenshots/06-editor.png) |
+| ![Share dialog](docs/screenshots/05-share.png) | ![Phone layout](docs/screenshots/11-mobile-editor.png) |
 
 ## What it does
 
@@ -26,11 +31,12 @@ You can also create your own account at `/signup` (no email confirmation needed)
 | **File upload** | Turns a file into a **new editable document**. Supported: **`.txt`, `.md`, `.docx`**, up to **4 MB**. Headings, bold, italic, underline and lists are kept; images and tables are not imported. This is stated in the upload dialog. |
 | **Sharing & roles** | Owner shares by email as **Editor** or **Viewer**; owner can change roles or revoke at any time. Editors can edit and rename; viewers are read-only; only the owner can share or delete. Enforced in the database (RLS), not just the UI. |
 | **Export** *(stretch)* | **Markdown** (`.md` download) and **PDF** (browser print dialog → "Save as PDF", with a print stylesheet that hides the app chrome). Available to every role, from the editor or the dashboard card menu. |
-| **Quality** | Input validation (zod) on client and server, friendly error states, accessibility scans (axe) on every screen, responsive layout, 54 automated tests. |
+| **Design** | A warm pastel design system (cream, peach, sage, lavender) with a typographic pairing of Fraunces (display), Plus Jakarta Sans (UI) and Newsreader (document body). Document **thumbnails** on the dashboard, a glass navbar, and Framer Motion micro-interactions (staggered cards, hover lift, animated save status, animated dialogs); `prefers-reduced-motion` is respected. Login/signup are a split-screen with one-click **demo accounts**. |
+| **Quality** | Input validation (zod) on client and server, friendly error states, accessibility scans (axe) on every screen, responsive layout, 59 automated tests. |
 
 ## Tech stack
 
-Next.js 16 (App Router, Server Actions) · TypeScript · Tailwind + shadcn/ui · Tiptap editor · Supabase (Auth, Postgres + Row Level Security) · Vercel · Vitest + Playwright.
+Next.js 16 (App Router, Server Actions) · TypeScript · Tailwind + shadcn/ui · Framer Motion · Tiptap editor · Supabase (Auth, Postgres + Row Level Security) · Vercel · Vitest + Playwright.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for design decisions and trade-offs.
 
@@ -74,7 +80,7 @@ npm run db:push
 ```
 
 This applies the SQL files in [`supabase/migrations`](supabase/migrations) using the Supabase CLI (installed on demand: `brew install supabase/tap/supabase`, or see the Supabase docs).
-**No CLI?** Open the Supabase dashboard → **SQL Editor**, then paste and run the two migration files **in order** (`…_init.sql`, then `…_fix_select_policy.sql`).
+**No CLI?** Open the Supabase dashboard → **SQL Editor**, then paste and run the three migration files **in order** (`…_init.sql`, `…_fix_select_policy.sql`, then `…_document_preview.sql`).
 
 ### 5. Seed demo data
 
@@ -93,7 +99,7 @@ npm run dev      # http://localhost:3000
 ## Tests
 
 ```bash
-npm test             # 35 unit + database tests (Vitest)
+npm test             # 40 unit + database tests (Vitest)
 npm run typecheck && npm run lint
 npm run test:e2e     # 19 browser tests (Playwright); starts the dev server itself
 ```
@@ -103,6 +109,7 @@ Run E2E against the deployed site with `E2E_BASE_URL=https://mock-doc.vercel.app
 
 What the tests cover:
 - **`tests/rls.test.ts`** — runs against the real Supabase project with throwaway users: strangers can't read, viewers can't write, editors can't change ownership or manage shares, only owners delete, revoked access takes effect immediately.
+- **`tests/preview.test.ts`** — the database trigger that derives dashboard thumbnails: capped to the first blocks, follows edits, can't be forged by a client, falls back to an excerpt for huge blocks.
 - **`tests/import.test.ts`, `tests/export.test.ts`** — txt/md/docx conversion (including a real `.docx` generated in the test), XSS stripping, bad-file rejection, Markdown serialization and a round trip.
 - **`tests/e2e/*`** — the full user journeys in a real browser: auth, CRUD + formatting persistence, upload, two-user sharing lifecycle (viewer → editor → revoked, including mid-edit), export downloads, offline autosave recovery, axe accessibility scans, and zero console errors.
 

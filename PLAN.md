@@ -291,6 +291,17 @@ Dashboard sections (the "canvas"):
 
 If time-boxed tighter: finish 0–4 and 6–7 first, then 5 (export is the stretch; the validation and test items in Sprint 5 are core, so do those regardless).
 
+## Sprint 8 — Visual polish (requested after Sprint 6)
+
+- [x] Warm pastel design system (oklch tokens), richer fonts (Fraunces / Plus Jakarta Sans / Newsreader)
+- [x] Document thumbnails: `documents.preview` column + trigger (migration 3), `DocPreview` renderer, DB tests
+- [x] Prettier glass navbar with logo mark, animated CTAs, colored avatar
+- [x] Framer Motion micro-interactions (cards, hover lift, save status, dialogs, dropzone, empty states, page template) with reduced-motion support
+- [x] Redesigned login/signup: split screen, floating document art, password reveal, error shake, one-click demo accounts
+- [x] Editor restyle: paper page, floating toolbar pill, reading serif; responsive header
+- [x] Tests updated (exact label matching, true save-state attribute, global teardown); a11y + console checks still pass; E2E 19/19 locally and on production
+- [x] Docs + screenshots refreshed
+
 ## Final pre-submit checklist
 
 - [ ] Every row in Section 1 ticked

@@ -36,7 +36,7 @@ Browser (React / Tiptap)
 ```
 auth.users ──1:1── profiles(id, email, display_name)
                       │
-                      ├──< documents(id, owner_id, title, content jsonb, source, original_filename, timestamps)
+                      ├──< documents(id, owner_id, title, content jsonb, preview jsonb, source, original_filename, timestamps)
                       │         │
                       └──< document_shares(document_id, user_id, role: editor|viewer)  unique(document_id,user_id)
 ```
@@ -44,6 +44,12 @@ auth.users ──1:1── profiles(id, email, display_name)
 - `profiles` is created by a trigger on signup, so share-by-email can resolve users.
 - `documents.source` (`created` | `uploaded`) drives the dashboard's "Uploaded documents" section; `original_filename` is kept for provenance.
 - **Role model:** *owner* is implicit (`documents.owner_id`); `document_shares.role` is `editor` or `viewer`. A user has at most one share per document.
+
+## Thumbnails and the design system
+
+- **Dashboard thumbnails** are real miniatures of each document. A database trigger derives `documents.preview` (the first 6 blocks of `content`, with a plain-text-excerpt fallback if blocks are huge) on every insert/update, so the dashboard never downloads whole documents to draw cards, and clients can't forge it. `DocPreview` renders that slice at full size inside a scaled-down page. Tested in `tests/preview.test.ts`.
+- **Design tokens** live in `globals.css` (oklch): a cream/espresso base, a terracotta primary (chosen to keep AA contrast with white text), and pastel fills with matching "ink" colors for chips. Three fonts do three jobs: Fraunces for headings, Plus Jakarta Sans for UI, Newsreader for reading/writing.
+- **Motion** (Framer Motion) is deliberately small: staggered entrance and hover lift on cards, animated save status, animated dialogs and list changes, a page-entrance template, and a shake on failed auth. One `MotionConfig reducedMotion="user"` honors the OS setting, and E2E runs in reduced-motion mode so animation can't cause flakiness.
 
 ## Access control (the core of the sharing design)
 
