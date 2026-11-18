@@ -1,6 +1,6 @@
 # Ajaia Collaborative Doc Editor — Build Plan
 
-> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 ✅ · Sprint 6 next (polish, README/docs, final deploy checks).
+> **Status (2026-11-18):** Sprint 0 ✅ · Sprint 1 ✅ (header user menu lands with the Sprint 2 dashboard) · Sprint 2 ✅ · Sprint 3 ✅ · Sprint 4 ✅ · Sprint 5 ✅ · Sprint 6 ✅ · Sprint 7 next (video, final submission package).
 > Live: https://mock-h8rzy8iad-lasyagowda07-7344s-projects.vercel.app · Repo: github.com/lasyagowda07/mock-doc (private)
 > Demo logins (run `npm run seed`): alice@ / bob@ / carol@example.com, password `Demo-pass-123`.
 
@@ -42,7 +42,7 @@ Dashboard sections (the "canvas"):
 | Headings / text size | 2 | [x] |
 | Bulleted + numbered lists | 2 | [x] |
 | File upload → product-relevant | 3 | [x] |
-| Supported file types stated in UI **and** README | 3, 6 | UI [x] · README [ ] |
+| Supported file types stated in UI **and** README | 3, 6 | UI [x] · README [x] |
 | Doc owner | 1, 4 | [x] |
 | Grant another user access | 4 | [x] |
 | Visible owned vs shared distinction | 1/4 | [x] _(badges, accent border, "Shared by", separate section)_ |
@@ -50,16 +50,16 @@ Dashboard sections (the "canvas"):
 | Persistence across refresh | 2 | [x] |
 | Formatting preserved | 2 | [x] |
 | Shared access demonstrable | 4 | [x] |
-| Setup/run instructions | 6 | [ ] |
-| Working deployment | 6 | [ ] |
+| Setup/run instructions | 6 | [x] |
+| Working deployment | 6 | [x] |
 | Validation + error handling | 5 | [x] |
 | ≥1 meaningful automated test | 5 | [x] |
-| Architecture note | 6 | [ ] |
-| AI workflow note | 6 | [ ] |
+| Architecture note | 6 | [x] |
+| AI workflow note | 6 | [x] |
 | Walkthrough video (3–5 min) | 7 | [ ] |
 | Export PDF / Markdown (stretch) | 5 | [x] |
 | Role-based permissions (stretch) | 4 | [x] |
-| README: working / incomplete / next 2–4 hrs | 6 | [ ] |
+| README: working / incomplete / next 2–4 hrs | 6 | [x] |
 | SUBMISSION.md, creds, video URL txt, screenshots | 7 | [ ] |
 | Google Drive folder | 7 | [ ] |
 
@@ -211,24 +211,26 @@ Dashboard sections (the "canvas"):
 
 ## Sprint 6 — Polish, deployment, docs (≈3 hrs)
 
+**Decisions made / found:** axe (WCAG 2.1 A/AA) on every screen state + zero console errors are now a test (`quality.spec.ts`). Fixed: signup form wiped on error, avatar name mismatch, phone-width editor header overflow, leaky E2E test. Added favicon; removed unused `canExport` and `ui/tabs`. **Fresh-clone check** (clone → `npm ci` → typecheck/lint/test/build → 19 E2E) passed after removing a dependency on Next's generated `LayoutProps` type. Docs: README, ARCHITECTURE, AI_WORKFLOW (draft: review and personalize), SUBMISSION (draft: video + Drive links pending), 8 screenshots in `docs/screenshots`.
+
 **Polish**
-- [ ] Responsive layout check (desktop first, usable on tablet)
-- [ ] Dark mode (shadcn default) works or is intentionally off
-- [ ] Accessibility pass: labels, focus rings, toolbar `aria-pressed`, keyboard nav
-- [ ] Favicon, page titles, consistent copy
-- [ ] Remove console errors/warnings; remove dead code
+- [x] Responsive layout check (desktop first, usable on tablet)
+- [x] Dark mode: intentionally off (light-only, documented)
+- [x] Accessibility pass: labels, focus rings, toolbar `aria-pressed`, keyboard nav
+- [x] Favicon, page titles, consistent copy
+- [x] Remove console errors/warnings; remove dead code
 
 **Deployment**
-- [ ] Production Supabase: migrations applied, auth site URL + redirect URLs set to Vercel domain
-- [ ] Vercel env vars set; production build passes (`next build`)
-- [ ] Seed demo accounts in production; verify sharing flow live in two browsers
-- [ ] Confirm no paid dependencies; Supabase free project won't be paused (visit it before submitting; note pause risk)
+- [x] Production Supabase: migrations applied; "Confirm email" is off (verified via the auth settings endpoint + a real signup E2E). Site/redirect URLs aren't needed: no email flows
+- [x] Vercel env vars set; production build passes (`next build`)
+- [x] Seed demo accounts in production; verify sharing flow live in two browsers
+- [x] Confirm no paid dependencies. Pause risk is documented. **Reminder for Sprint 7: open the app / Supabase dashboard right before submitting**
 
 **Docs (all in repo root / `docs/`)**
-- [ ] `README.md`: overview, features, supported upload types, prerequisites, env vars, local setup (Supabase local or hosted), run, test, seeded credentials, deployment notes, **what works / what's incomplete / what's next with 2–4 more hours**
-- [ ] `ARCHITECTURE.md`: stack, data model diagram, RLS approach, editor/storage format, what was prioritized and why, deliberate cuts (real-time co-editing, comments, version history, etc.), known limitations (e.g., last-write-wins on concurrent edits)
-- [ ] `AI_WORKFLOW.md`: tools used; where AI sped things up; what AI output was changed/rejected (keep concrete examples — keep a running log while building); how correctness/UX/reliability were verified
-- [ ] Screenshots / GIF of main flows (login, dashboard, editor, upload, share, export)
+- [x] `README.md`: overview, features, supported upload types, prerequisites, env vars, local setup (Supabase local or hosted), run, test, seeded credentials, deployment notes, **what works / what's incomplete / what's next with 2–4 more hours**
+- [x] `ARCHITECTURE.md`: stack, data model diagram, RLS approach, editor/storage format, what was prioritized and why, deliberate cuts (real-time co-editing, comments, version history, etc.), known limitations (e.g., last-write-wins on concurrent edits)
+- [x] `AI_WORKFLOW.md`: tools used; where AI sped things up; what AI output was changed/rejected (keep concrete examples — keep a running log while building); how correctness/UX/reliability were verified
+- [x] Screenshots / GIF of main flows (login, dashboard, editor, upload, share, export)
 
 ---
 
